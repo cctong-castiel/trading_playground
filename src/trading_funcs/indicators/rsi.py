@@ -1,4 +1,4 @@
-from type import Any
+from typing import Any
 import pandas as pd
 from src.trading_funcs.indicators.base import IndicatorBase
 
