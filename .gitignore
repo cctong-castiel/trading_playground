@@ -196,4 +196,4 @@ cython_debug/
 # others
 ngrok/ngrok.yml
 certifi.pem
-src/tests/data/** */
+src/tests/data/
