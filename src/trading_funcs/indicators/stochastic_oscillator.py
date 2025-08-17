@@ -1,5 +1,6 @@
 from typing import Any
 import pandas as pd
+from src.settings.consts import SHIFT_STOCHASTIC_VAL
 from src.trading_funcs.indicators.base import IndicatorBase
 
 
@@ -25,12 +26,16 @@ class StochasticOscillator(IndicatorBase):
         k_percent = 100 * ((df['close_new'] - low_min) / (high_max - low_min))
         d_percent = k_percent.rolling(window=3).mean()
 
+        # shift both k_percent and d_percent down by 100 units
+        k_percent = k_percent - SHIFT_STOCHASTIC_VAL
+        d_percent = d_percent - SHIFT_STOCHASTIC_VAL
+
         return pd.DataFrame({
             'time': df['time'],
             '%K': k_percent.fillna(0),
             '%D': d_percent.fillna(0),
-            'Stochastic 20%': [20] * len(df),
-            'Stochastic 80%': [80] * len(df)
+            'Stochastic 20%': [80 - SHIFT_STOCHASTIC_VAL] * len(df),
+            'Stochastic 80%': [20 - SHIFT_STOCHASTIC_VAL] * len(df)
         })
     
     def create(self, chart: Any, data: pd.DataFrame) -> None:

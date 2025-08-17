@@ -5,9 +5,11 @@ from lightweight_charts import Chart
 import yfinance as yf
 import datetime
 from dateutil.relativedelta import relativedelta
+
 # create a class to wrap the above script and plot the chart. Also use stochastic_oscillator.py and rsi.py to add these 2 indicators
 from src.trading_funcs.indicators.rsi import RSI
 from src.trading_funcs.indicators.stochastic_oscillator import StochasticOscillator
+from src.trading_funcs.indicators.donchian_channels import DonchianChannelsOscillator
 
 
 class StockChart:
@@ -148,7 +150,7 @@ if __name__ == "__main__":
 
     # initialization
     stock_data_path = "./src/tests/data"
-    start_date   = (datetime.datetime.now() - relativedelta(years=3)).strftime('%Y-%m-%d')
+    start_date = (datetime.datetime.now() - relativedelta(years=3)).strftime('%Y-%m-%d')
     end_date = datetime.datetime.now().strftime('%Y-%m-%d')
     interval = '1d'
     save_flag = True
