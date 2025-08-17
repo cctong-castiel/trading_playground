@@ -3,13 +3,13 @@ import pandas as pd
 from src.trading_funcs.indicators.base import IndicatorBase
 
 
-class DonchianChannelsOscillator(IndicatorBase):
+class DonchianChannels(IndicatorBase):
     """
-    Donchian channels Oscillator indicator class.
-    This class calculates the Donchian channels Oscillator based on the provided DataFrame.
+    Donchian channels  indicator class.
+    This class calculates the Donchian channels based on the provided DataFrame.
     """
 
-    def __init__(self, name: str = "Donchian channels Oscillator"):
+    def __init__(self, name: str = "Donchian channels"):
         super().__init__(name)
 
     def calculate_indicator_df(self, df: pd.DataFrame, period: int = 20) -> pd.DataFrame:
