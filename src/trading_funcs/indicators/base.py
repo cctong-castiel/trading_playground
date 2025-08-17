@@ -1,4 +1,5 @@
 import pandas as pd
+from src.settings.consts import indicator_config
 
 
 class IndicatorBase:
@@ -9,6 +10,7 @@ class IndicatorBase:
 
     def __init__(self, name: str):
         self.name = name
+        self.color = indicator_config.get('colour')
 
     def calculate_indicator_df(df: pd.DataFrame) -> pd.DataFrame:
         """

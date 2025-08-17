@@ -3,10 +3,15 @@ import pandas as pd
 import numpy as np
 from lightweight_charts import Chart
 import yfinance as yf
+import datetime
+from dateutil.relativedelta import relativedelta
+
 # create a class to wrap the above script and plot the chart. Also use stochastic_oscillator.py and rsi.py to add these 2 indicators
 from src.trading_funcs.indicators.rsi import RSI
 from src.trading_funcs.indicators.stochastic_oscillator import StochasticOscillator
-
+from src.trading_funcs.indicators.sma import SMA
+from src.trading_funcs.indicators.donchian_channels import DonchianChannels
+from src.trading_funcs.indicators.bollinger_bands import BollingerBands
 
 class StockChart:
     def __init__(self, stock_code: str, stock_data_path: str, start_date: str, end_date: str, interval: str = '1d', save_flag: bool = True):
@@ -121,14 +126,17 @@ class StockChart:
             return
         
         self.chart.set(data)
-        
-        # Add RSI indicator
-        rsi_indicator = RSI()
-        self.chart = rsi_indicator.create(self.chart, data)
-        
-        # Add Stochastic Oscillator indicator
-        # stochastic_indicator = StochasticOscillator()
-        # self.chart = stochastic_indicator.create(self.chart, data)
+
+        # using for loop to add all indicators
+        indicators = [
+            SMA(),
+            StochasticOscillator(),
+            RSI(),
+            DonchianChannels(),
+            BollingerBands()
+        ]
+        for indicator in indicators:
+            self.chart = indicator.create(self.chart, data)
         
         # Show the chart
         self.chart.show(block=True)
@@ -146,8 +154,8 @@ if __name__ == "__main__":
 
     # initialization
     stock_data_path = "./src/tests/data"
-    start_date = '2024-06-09'
-    end_date = '2024-07-26'
+    start_date = (datetime.datetime.now() - relativedelta(years=3)).strftime('%Y-%m-%d')
+    end_date = datetime.datetime.now().strftime('%Y-%m-%d')
     interval = '1d'
     save_flag = True
     excel_extensions = ['.xlsx', '.xls', '.xlsm', 'csv']
