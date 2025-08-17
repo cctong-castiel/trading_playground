@@ -28,11 +28,13 @@ class SMA(IndicatorBase):
         This method should be implemented by subclasses.
         """
         
-        sma9_line = chart.create_line(name='SMA 9', color='#ffeb3b', width=1, price_label=False)
+        # sma9_line = chart.create_line(name='SMA 9', color='#ffeb3b', width=1, price_label=False)
+        sma9_line = chart.create_line(name='SMA 9', color=self.color.get('sma9'), width=1, price_label=False)
         sma9_data = self.calculate_indicator_df(data, period=9)
         sma9_line.set(sma9_data)
 
-        sma4_line = chart.create_line(name='SMA 4', color ="#5f3bff", width=1, price_label=False)
+        # sma4_line = chart.create_line(name='SMA 4', color ="#5f3bff", width=1, price_label=False)
+        sma4_line = chart.create_line(name='SMA 4', color=self.color.get('sma4'), width=1, price_label=False)
         sma4_data = self.calculate_indicator_df(data, period=4)
         sma4_line.set(sma4_data)
 

@@ -45,10 +45,10 @@ class StochasticOscillator(IndicatorBase):
         """
         
         stochastic_data = self.calculate_indicator_df(data)
-        stochastic_k_line = chart.create_line(name='%K', color="#ff00ff", width=1, price_line=False, price_label=False)
-        stochastic_d_line = chart.create_line(name='%D', color="#00ffff", width=1, price_line=False, price_label=False)
-        stochastic_20_line = chart.create_line(name='Stochastic 20%', color="#ff0000", width=1, price_line=False, price_label=False)
-        stochastic_80_line = chart.create_line(name='Stochastic 80%', color="#00ff00", width=1, price_line=False, price_label=False)
+        stochastic_k_line = chart.create_line(name='%K', color=self.color.get('stochastic_k_line'), width=1, price_line=False, price_label=False)
+        stochastic_d_line = chart.create_line(name='%D', color=self.color.get('stochastic_d_line'), width=1, price_line=False, price_label=False)
+        stochastic_20_line = chart.create_line(name='Stochastic 20%', color=self.color.get('stochastic_20'), width=1, price_line=False, price_label=False)
+        stochastic_80_line = chart.create_line(name='Stochastic 80%', color=self.color.get('stochastic_80'), width=1, price_line=False, price_label=False)
         stochastic_k_line.set(stochastic_data)
         stochastic_d_line.set(stochastic_data)
         stochastic_20_line.set(stochastic_data)

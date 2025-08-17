@@ -36,9 +36,9 @@ class BollingerBands(IndicatorBase):
         """
         
         bollinger20_data = self.calculate_indicator_df(data, period=20, num_std_dev=2)
-        bollinger20_upper_line = chart.create_line(name='Upper Bollinger 20', color="#00fff2", width=1, price_line=False, price_label=False)
-        bollinger20_lower_line = chart.create_line(name='Lower Bollinger 20', color="#ff0000", width=1, price_line=False, price_label=False)
-        bollinger20_mean_line = chart.create_line(name='Mean Bollinger 20', color="#ffffff", width=1, price_line=False, price_label=False)
+        bollinger20_upper_line = chart.create_line(name='Upper Bollinger 20', color=self.color.get('bollinger_upper'), width=1, price_line=False, price_label=False)
+        bollinger20_lower_line = chart.create_line(name='Lower Bollinger 20', color=self.color.get('bollinger_lower'), width=1, price_line=False, price_label=False)
+        bollinger20_mean_line = chart.create_line(name='Mean Bollinger 20', color=self.color.get('bollinger_mean'), width=1, price_line=False, price_label=False)
         bollinger20_upper_line.set(bollinger20_data)
         bollinger20_lower_line.set(bollinger20_data)
         bollinger20_mean_line.set(bollinger20_data)

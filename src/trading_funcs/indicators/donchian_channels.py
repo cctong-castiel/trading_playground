@@ -35,9 +35,9 @@ class DonchianChannels(IndicatorBase):
         """
         
         donchian20_data = self.calculate_indicator_df(data, period=20)
-        donchian20_upper_line = chart.create_line(name='Upper Donchian 20', color="#00ff11", width=1, price_line=False, price_label=False)
-        donchian20_lower_line = chart.create_line(name='Lower Donchian 20', color="#ff4800", width=1, price_line=False, price_label=False)
-        donchian20_mean_line = chart.create_line(name='Mean Donchian 20', color="#ffffff", width=1, price_line=False, price_label=False)
+        donchian20_upper_line = chart.create_line(name='Upper Donchian 20', color=self.color.get('donchian_upper'), width=1, price_line=False, price_label=False)
+        donchian20_lower_line = chart.create_line(name='Lower Donchian 20', color=self.color.get('donchian_lower'), width=1, price_line=False, price_label=False)
+        donchian20_mean_line = chart.create_line(name='Mean Donchian 20', color=self.color.get('donchian_mean'), width=1, price_line=False, price_label=False)
         donchian20_upper_line.set(donchian20_data)
         donchian20_lower_line.set(donchian20_data)
         donchian20_mean_line.set(donchian20_data)
