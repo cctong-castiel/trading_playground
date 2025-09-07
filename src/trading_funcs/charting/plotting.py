@@ -6,6 +6,10 @@ import yfinance as yf
 import datetime
 from dateutil.relativedelta import relativedelta
 from src.trading_funcs.charting.indicators import StockIndicators
+from src.utils.logs import set_up_log
+
+
+logger = set_up_log(__name__)
 
 
 class StockChart():
@@ -31,7 +35,7 @@ class StockChart():
         
     def contains_excel_file(self, path: str, filename: str) -> bool:
         if not os.path.isdir(path):
-            print("Invalid directory path.")
+            logger.info("Invalid directory path.")
             return False
 
         for root, dirs, files in os.walk(path):
@@ -39,7 +43,7 @@ class StockChart():
                 if filename.lower() == file.lower():
                     return True
 
-        print("No Excel files found.")
+        logger.info("No Excel files found.")
         return False
 
     def download_yf_data(self, stock_code: str) -> pd.DataFrame:
@@ -56,7 +60,7 @@ class StockChart():
         data = yf.download([stock_code], start=self.start_date, end=self.end_date, interval=self.interval)
         data = self.preprocess_stock_data(data)
         if self.save_flag:
-            print(f"saving path: {self.stock_data_path}/{stock_code}_{self.end_date}.csv")
+            logger.info(f"saving path: {self.stock_data_path}/{stock_code}_{self.end_date}.csv")
             data.to_csv(f"{self.stock_data_path}/{stock_code}_{self.end_date}.csv")
         return data
 
@@ -67,9 +71,9 @@ class StockChart():
         """
 
         if self.contains_excel_file(self.stock_data_path, f"{stock_code}_{self.end_date}.csv") is False:
-            print(f'No data for "{stock_code}" download it from Yahoo Finance')
+            logger.info(f'No data for "{stock_code}" download it from Yahoo Finance')
             return self.download_yf_data(stock_code=stock_code)
-        print(f'Get data for "{stock_code}" from {self.stock_data_path}')
+        logger.info(f'Get data for "{stock_code}" from {self.stock_data_path}')
         return pd.read_csv(f'{self.stock_data_path}/{stock_code}_{self.end_date}.csv')
 
     # twist the stock data for downstream processing
@@ -116,13 +120,13 @@ class StockChart():
         chart.set(new_data, True)
 
     def on_horizontal_line_move(self, line):
-        print(f'Horizontal line moved to: {line.price}')
+        logger.info(f'Horizontal line moved to: {line.price}')
 
 
     def plot(self, data: pd.DataFrame = None):
         
         if data is None:
-            print(f'No data available for {self.stock_code}')
+            logger.info(f'No data available for {self.stock_code}')
             return
         
         indicators = [
@@ -135,11 +139,9 @@ class StockChart():
 
         # using for loop to add all indicators
         for indicator in indicators:
-            print(f'Adding indicator: {indicator.name}')
             indicator.create(data=data)
 
         self.chart.set(data)
-        # self.chart.show(block=True)  # This will open the chart in a web browser
         return self.chart
 
     
@@ -149,7 +151,7 @@ if __name__ == "__main__":
     # input the stock code
     stock_code = input("Enter stock code (e.g., AAPL): ").strip().upper()
     if not stock_code:
-        print("No stock code provided. Exiting.")
+        logger.info("No stock code provided. Exiting.")
         exit()
 
     # initialization
