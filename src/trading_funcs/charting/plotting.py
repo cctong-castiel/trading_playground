@@ -97,6 +97,7 @@ class StockChart:
         return data
 
     def on_search(self, chart, searched_string):  # Called when the user searches.
+        self.stock_code = searched_string
         new_data = self.get_bar_data(searched_string)
         if new_data.empty:
             return
@@ -124,8 +125,6 @@ class StockChart:
         if data is None:
             print(f'No data available for {self.stock_code}')
             return
-        
-        self.chart.set(data)
 
         # using for loop to add all indicators
         indicators = [
@@ -137,9 +136,8 @@ class StockChart:
         ]
         for indicator in indicators:
             self.chart = indicator.create(self.chart, data)
-        
-        # Show the chart
-        self.chart.show(block=True)
+
+        self.chart.set(data)
 
         return self.chart
     
@@ -168,4 +166,5 @@ if __name__ == "__main__":
         interval=interval,
         save_flag=save_flag
     )
-    stock_chart.plot()
+    chart_plot = stock_chart.plot()
+    chart_plot.show(block=True)  # This will open the chart in a web browser
