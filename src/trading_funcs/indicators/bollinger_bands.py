@@ -1,5 +1,6 @@
 from typing import Any
 import pandas as pd
+from lightweight_charts import Chart
 from src.trading_funcs.indicators.base import IndicatorBase
 
 
@@ -9,8 +10,12 @@ class BollingerBands(IndicatorBase):
     This class calculates the Bollinger bands based on the provided DataFrame.
     """
 
-    def __init__(self, name: str = "Bollinger bands"):
+    def __init__(self, chart: Chart, name: str = "Bollinger bands"):
         super().__init__(name)
+        self.chart = chart
+        self.bollinger20_upper_line = chart.create_line(name='Upper Bollinger 20', color=self.color.get('bollinger_upper'), width=1, price_line=False, price_label=False)
+        self.bollinger20_lower_line = chart.create_line(name='Lower Bollinger 20', color=self.color.get('bollinger_lower'), width=1, price_line=False, price_label=False)
+        self.bollinger20_mean_line = chart.create_line(name='Mean Bollinger 20', color=self.color.get('bollinger_mean'), width=1, price_line=False, price_label=False)
 
     def calculate_indicator_df(self, df: pd.DataFrame, period: int = 20, num_std_dev: int = 2) -> pd.DataFrame:
         """
@@ -29,18 +34,13 @@ class BollingerBands(IndicatorBase):
             f'Lower Bollinger {period}': lower_band.fillna(0)
         })
     
-    def create(self, chart: Any, data: pd.DataFrame) -> None:
+    def create(self, data: pd.DataFrame) -> None:
         """
         Create the Bollinger bands indicator on the provided chart.
         This method should be implemented by subclasses.
         """
         
-        bollinger20_data = self.calculate_indicator_df(data, period=20, num_std_dev=2)
-        bollinger20_upper_line = chart.create_line(name='Upper Bollinger 20', color=self.color.get('bollinger_upper'), width=1, price_line=False, price_label=False)
-        bollinger20_lower_line = chart.create_line(name='Lower Bollinger 20', color=self.color.get('bollinger_lower'), width=1, price_line=False, price_label=False)
-        bollinger20_mean_line = chart.create_line(name='Mean Bollinger 20', color=self.color.get('bollinger_mean'), width=1, price_line=False, price_label=False)
-        bollinger20_upper_line.set(bollinger20_data)
-        bollinger20_lower_line.set(bollinger20_data)
-        bollinger20_mean_line.set(bollinger20_data)
-
-        return chart
+        bollinger20_data = self.calculate_indicator_df(data, period=20, num_std_dev=2) 
+        self.bollinger20_upper_line.set(bollinger20_data)
+        self.bollinger20_lower_line.set(bollinger20_data)
+        self.bollinger20_mean_line.set(bollinger20_data)

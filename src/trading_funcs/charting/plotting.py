@@ -5,15 +5,10 @@ from lightweight_charts import Chart
 import yfinance as yf
 import datetime
 from dateutil.relativedelta import relativedelta
+from src.trading_funcs.charting.indicators import StockIndicators
 
-# create a class to wrap the above script and plot the chart. Also use stochastic_oscillator.py and rsi.py to add these 2 indicators
-from src.trading_funcs.indicators.rsi import RSI
-from src.trading_funcs.indicators.stochastic_oscillator import StochasticOscillator
-from src.trading_funcs.indicators.sma import SMA
-from src.trading_funcs.indicators.donchian_channels import DonchianChannels
-from src.trading_funcs.indicators.bollinger_bands import BollingerBands
 
-class StockChart:
+class StockChart():
     def __init__(self, stock_code: str, stock_data_path: str, start_date: str, end_date: str, interval: str = '1d', save_flag: bool = True):
         self.stock_code = stock_code
         self.stock_data_path = stock_data_path
@@ -23,6 +18,7 @@ class StockChart:
         self.save_flag = save_flag
         self.chart = Chart(toolbox=True)
         self._set_chart_styles()
+        self.stock_indicators = StockIndicators(chart=self.chart)
         
     def _set_chart_styles(self):
         self.chart.layout(background_color='#131722', font_family='Trebuchet MS', font_size=16)
@@ -98,20 +94,23 @@ class StockChart:
 
     def on_search(self, chart, searched_string):  # Called when the user searches.
         self.stock_code = searched_string
-        new_data = self.get_bar_data(searched_string)
+        new_data = self.get_bar_data(stock_code=searched_string)
         if new_data.empty:
             return
         chart.topbar['symbol'].set(searched_string)
-        chart.set(new_data)
+        chart.set(new_data, True)
+        # self.chart = Chart(toolbox=True)
+        self.plot(data=new_data)
 
     def on_timeframe_selection(self, chart):  # Called when the user changes the timeframe.
-        new_data = self.get_bar_data(stock_code)
+        new_data = self.get_bar_data(stock_code=stock_code)
         if new_data.empty:
             return
         chart.set(new_data, True)
+        self.plot(data=new_data)
 
     def on_timeframe_selection(self, chart):  # Called when the user changes the timeframe.
-        new_data = self.get_bar_data(stock_code)
+        new_data = self.get_bar_data(stock_code=stock_code)
         if new_data.empty:
             return
         chart.set(new_data, True)
@@ -120,26 +119,29 @@ class StockChart:
         print(f'Horizontal line moved to: {line.price}')
 
 
-    def plot(self):
-        data = self.get_bar_data(stock_code=self.stock_code)
+    def plot(self, data: pd.DataFrame = None):
+        
         if data is None:
             print(f'No data available for {self.stock_code}')
             return
+        
+        indicators = [
+            self.stock_indicators.sma,
+            self.stock_indicators.stochastic_oscillator,
+            self.stock_indicators.rsi,
+            self.stock_indicators.donchian_channels,
+            self.stock_indicators.bollinger_bands
+        ]
 
         # using for loop to add all indicators
-        indicators = [
-            SMA(),
-            StochasticOscillator(),
-            RSI(),
-            DonchianChannels(),
-            BollingerBands()
-        ]
         for indicator in indicators:
-            self.chart = indicator.create(self.chart, data)
+            print(f'Adding indicator: {indicator.name}')
+            indicator.create(data=data)
 
         self.chart.set(data)
-
+        # self.chart.show(block=True)  # This will open the chart in a web browser
         return self.chart
+
     
 # Example usage
 if __name__ == "__main__":
@@ -166,5 +168,6 @@ if __name__ == "__main__":
         interval=interval,
         save_flag=save_flag
     )
-    chart_plot = stock_chart.plot()
+    data = stock_chart.get_bar_data(stock_code=stock_code)
+    chart_plot = stock_chart.plot(data=data)
     chart_plot.show(block=True)  # This will open the chart in a web browser

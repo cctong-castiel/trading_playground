@@ -1,5 +1,6 @@
 from typing import Any
 import pandas as pd
+from lightweight_charts import Chart
 from src.settings.consts import SHIFT_STOCHASTIC_VAL
 from src.trading_funcs.indicators.base import IndicatorBase
 
@@ -10,8 +11,13 @@ class StochasticOscillator(IndicatorBase):
     This class calculates the Stochastic Oscillator based on the provided DataFrame.
     """
 
-    def __init__(self, name: str = "Stochastic Oscillator"):
+    def __init__(self, chart: Chart, name: str = "Stochastic Oscillator"):
         super().__init__(name)
+        self.chart = chart
+        self.stochastic_k_line = chart.create_line(name='%K', color=self.color.get('stochastic_k_line'), width=1, price_line=False, price_label=False)
+        self.stochastic_d_line = chart.create_line(name='%D', color=self.color.get('stochastic_d_line'), width=1, price_line=False, price_label=False)
+        self.stochastic_20_line = chart.create_line(name='Stochastic 20%', color=self.color.get('stochastic_20'), width=1, price_line=False, price_label=False)
+        self.stochastic_80_line = chart.create_line(name='Stochastic 80%', color=self.color.get('stochastic_80'), width=1, price_line=False, price_label=False)
 
     def calculate_indicator_df(self, df: pd.DataFrame, period=14) -> pd.DataFrame:
         """
@@ -38,20 +44,14 @@ class StochasticOscillator(IndicatorBase):
             'Stochastic 80%': [20 - SHIFT_STOCHASTIC_VAL] * len(df)
         })
     
-    def create(self, chart: Any, data: pd.DataFrame) -> None:
+    def create(self, data: pd.DataFrame) -> None:
         """
         Create the Stochastic Oscillator indicator on the provided chart.
         This method should be implemented by subclasses.
         """
         
         stochastic_data = self.calculate_indicator_df(data)
-        stochastic_k_line = chart.create_line(name='%K', color=self.color.get('stochastic_k_line'), width=1, price_line=False, price_label=False)
-        stochastic_d_line = chart.create_line(name='%D', color=self.color.get('stochastic_d_line'), width=1, price_line=False, price_label=False)
-        stochastic_20_line = chart.create_line(name='Stochastic 20%', color=self.color.get('stochastic_20'), width=1, price_line=False, price_label=False)
-        stochastic_80_line = chart.create_line(name='Stochastic 80%', color=self.color.get('stochastic_80'), width=1, price_line=False, price_label=False)
-        stochastic_k_line.set(stochastic_data)
-        stochastic_d_line.set(stochastic_data)
-        stochastic_20_line.set(stochastic_data)
-        stochastic_80_line.set(stochastic_data)
-
-        return chart
+        self.stochastic_k_line.set(stochastic_data)
+        self.stochastic_d_line.set(stochastic_data)
+        self.stochastic_20_line.set(stochastic_data)
+        self.stochastic_80_line.set(stochastic_data)
