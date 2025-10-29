@@ -197,3 +197,5 @@ ngrok/ngrok.yml
 certifi.pem
 src/tests/data/
 src/data/
+.DS_Store
+**/.DS_Store
