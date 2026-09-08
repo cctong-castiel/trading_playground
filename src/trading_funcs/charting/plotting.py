@@ -21,7 +21,9 @@ class StockChart():
         self.interval = interval
         self.save_flag = save_flag
         self.chart = Chart(toolbox=True)
+        self.oscillator_chart = Chart(toolbox=True)
         self._set_chart_styles()
+        self._set_oscillator_styles()
         self.stock_indicators = StockIndicators(chart=self.chart)
         
     def _set_chart_styles(self):
@@ -32,6 +34,12 @@ class StockChart():
         self.chart.events.search += self.on_search
         self.chart.topbar.textbox('symbol', self.stock_code)
         self.chart.horizontal_line(200, func=self.on_horizontal_line_move)
+
+    def _set_oscillator_styles(self):
+        self.oscillator_chart.layout(background_color='#131722', font_family='Trebuchet MS', font_size=16)
+        self.oscillator_chart.name = f"{self.stock_code} Oscillators"
+        self.oscillator_chart.legend(visible=True, font_family='Trebuchet MS')
+        self.oscillator_chart.topbar.textbox('symbol', self.stock_code)
         
     def contains_excel_file(self, path: str, filename: str) -> bool:
         if not os.path.isdir(path):
@@ -129,20 +137,32 @@ class StockChart():
             logger.info(f'No data available for {self.stock_code}')
             return
         
-        indicators = [
+        # Main chart indicators
+        main_indicators = [
             self.stock_indicators.sma,
-            self.stock_indicators.stochastic_oscillator,
-            self.stock_indicators.rsi,
             self.stock_indicators.donchian_channels,
             self.stock_indicators.bollinger_bands
         ]
 
-        # using for loop to add all indicators
-        for indicator in indicators:
+        # Oscillator chart indicators
+        osc_indicators = [
+            self.stock_indicators.stochastic_oscillator,
+            self.stock_indicators.rsi,
+        ]
+
+        for indicator in main_indicators:
+            indicator.create(data=data)
+
+        # Reassign chart to the oscillator chart before creating them
+        for indicator in osc_indicators:
+            indicator.chart = self.oscillator_chart
             indicator.create(data=data)
 
         self.chart.set(data)
-        return self.chart
+        # Important: We must set the data for the oscillator chart too, 
+        # but the indicators themselves should be what is visible.
+        self.oscillator_chart.set(data)
+        return self.chart, self.oscillator_chart
 
     
 # Example usage
